@@ -33,8 +33,9 @@ def _ensure_dir(path: str) -> None:
 def _connect(db_path: str) -> sqlite3.Connection:
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA journal_mode=WAL;")
-    conn.execute("PRAGMA synchronous=NORMAL;")
+    # Keep generation clean: avoid creating -wal/-shm files.
+    conn.execute("PRAGMA journal_mode=DELETE;")
+    conn.execute("PRAGMA synchronous=FULL;")
     return conn
 
 
@@ -52,7 +53,7 @@ def _weighted_choice(rng: random.Random, values: Sequence[int], weights: Sequenc
     total = float(sum(weights))
     r = rng.random() * total
     upto = 0.0
-    for v, w in zip(values, weights, strict=True):
+    for v, w in zip(values, weights):
         upto += float(w)
         if upto >= r:
             return v
@@ -367,4 +368,3 @@ def main(argv: Sequence[str]) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main(sys.argv[1:]))
-
