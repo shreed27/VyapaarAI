@@ -29,8 +29,9 @@ def _safe_div(n: float, d: float) -> float:
 
 
 def _pct_change(curr: float, prev: float) -> float:
+    # Avoid infinite/unstable deltas when the baseline is zero.
     if prev == 0:
-        return 0.0 if curr == 0 else 1.0
+        return 0.0
     return float((curr - prev) / prev)
 
 
@@ -246,4 +247,3 @@ def compute_merchant_features(
         }
     finally:
         conn.close()
-
