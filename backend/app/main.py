@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 
 from .routers.health import router as health_router
+from .routers.voice import router as voice_router
 
 
 def create_app() -> FastAPI:
@@ -8,9 +9,9 @@ def create_app() -> FastAPI:
 
     # Routers
     app.include_router(health_router)
+    app.include_router(voice_router)
 
     return app
 
 
 app = create_app()
-
