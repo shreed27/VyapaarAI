@@ -193,7 +193,12 @@ def generate_merchants(rng: random.Random, n: int, now_ist: datetime) -> list[Me
 
     merchants: list[MerchantProfile] = []
     for i in range(n):
-        merchant_id = _sha256_hex(f"m|{i}|{_rand_str(rng, 12)}")[:32]
+        # Use stable ids for the first 200 merchants so other scripts can
+        # reliably reference merchant_001, merchant_002, ... (useful for demos).
+        if i < 200:
+            merchant_id = f"merchant_{i+1:03d}"
+        else:
+            merchant_id = _sha256_hex(f"m|{i}|{_rand_str(rng, 12)}")[:32]
         city, state = rng.choice(cities)
         category = rng.choices(categories, weights=[4.5, 1.2, 1.0, 1.3, 0.8, 1.0, 0.7], k=1)[0]
 
@@ -287,9 +292,12 @@ def write_transactions_db(
     try:
         _create_transactions_schema(conn)
 
+        # Ensure demo merchants like merchant_001 get enough data for training.
+        merchant_weights = [30.0 if mid == "merchant_001" else 1.0 for mid in merchant_ids]
+
         rows = []
         for i in range(n_transactions):
-            merchant_id = rng.choice(merchant_ids)
+            merchant_id = rng.choices(list(merchant_ids), weights=merchant_weights, k=1)[0]
             payer_hash = rng.choice(payer_hashes)
 
             # Recharge detection by known plan amounts, with some probability.
