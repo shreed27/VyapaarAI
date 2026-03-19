@@ -3,8 +3,8 @@ from __future__ import annotations
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
-from backend.app.services.context_builder import build_context
 from backend.app.services.engines import run_engine
+from backend.services.context_builder import build_context
 from backend.services.intent_router import route_intent
 from backend.app.services.stt_mock import mock_stt
 
