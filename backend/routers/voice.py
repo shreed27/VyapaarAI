@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field
 
 from backend.app.services.context_builder import build_context
 from backend.app.services.engines import run_engine
-from backend.app.services.intent_router import route_intent
+from backend.services.intent_router import route_intent
 from backend.app.services.stt_mock import mock_stt
 
 router = APIRouter()
